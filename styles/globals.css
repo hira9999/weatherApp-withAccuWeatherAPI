@@ -1,26 +1,89 @@
+@tailwind base;
+@tailwind components;
+
+input[type='range'] {
+  width: 100%;
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type='range']:focus {
+  outline: none;
+}
+input[type='range']::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(
+    to right,
+    #005fc2,
+    #35a834 16%,
+    #ffd400 50%,
+    #80172b
+  );
+  border-radius: 100px;
+}
+input[type='range']::-webkit-slider-thumb {
+  height: 5px;
+  width: 5px;
+  border-radius: 10px;
+  background: white;
+  -webkit-appearance: none;
+}
+
+.grid-item {
+  @apply flex flex-col border-[1px] border-white/20 rounded-md p-2 w-full h-[150px] bg-[#094F91] bg-opacity-20 active:opacity-70 relative;
+}
+
+.grid-title {
+  @apply flex items-center text-white/50 mb-2 text-xs;
+}
+
+.dayFcst-griditem {
+  display: grid;
+  grid-template-columns: 60px 4fr minmax(160px, 1fr);
+}
+
+.minmaxtemp {
+  display: grid;
+  place-items: center;
+  grid-template-columns: 24px 1fr 24px;
+}
+
+@tailwind utilities;
+
+.bg-tempSlide {
+  background: linear-gradient(
+    to right,
+    #005fc2,
+    #35a834 30%,
+    #ffd400 85%,
+    #ff6400
+  );
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
 html,
 body {
+  @apply bg-gradient-to-b from-[#094F91] to-[#ABC9E8];
+  height: 100vh;
+  color: white;
+  position: relative;
+  cursor: default;
   padding: 0;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
+#__next {
+  height: 100%;
+}
+
 a {
   color: inherit;
   text-decoration: none;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
-  body {
-    color: white;
-    background: black;
-  }
 }
