@@ -4,7 +4,7 @@ import type {
   CurrentConditionData,
   TwelveHoursFcstData,
   FivedaysFcstData,
-} from '../../../types/queryDatatype';
+} from '../../../graphql/types/queryDatatypes';
 import AirQuality_GridItem from './AirQuality_GridItem';
 import FivedaysFcst_GridItem from './FivedaysFcst_GridItem';
 import UVindex_GridItem from './UVindex_GridItem';

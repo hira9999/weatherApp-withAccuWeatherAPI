@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CurrentConditionData } from '../../../types/queryDatatype';
+import { CurrentConditionData } from '../../../graphql/types/queryDatatypes';
 import { CiTempHigh } from 'react-icons/ci';
 import Modal from '../Common/Modal';
 interface ApparentTemperature_GridItemProps {

@@ -1,4 +1,4 @@
-import type { KhaiValue } from '../types/queryDatatype';
+import type { KhaiValue } from '../graphql/types/queryDatatypes';
 
 const calculateCIAverage = (khaiValues?: KhaiValue[]) => {
   if (!khaiValues) return undefined;

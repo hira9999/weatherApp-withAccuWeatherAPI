@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {
   CurrentConditionData,
   FivedaysFcstData,
-} from '../../../types/queryDatatype';
+} from '../../../graphql/types/queryDatatypes';
 import { BsSunsetFill, BsSunriseFill } from 'react-icons/bs';
 import timeConv from '../../../utils/timeConv';
 import Modal from '../Common/Modal';

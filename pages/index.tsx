@@ -8,7 +8,7 @@ import type {
   FivedaysFcstData,
   AirQualityVariables,
   KhaiValueData,
-} from '../types/queryDatatype';
+} from '../graphql/types/queryDatatypes';
 import { ApolloError, useLazyQuery } from '@apollo/client';
 import { useEffect, useState } from 'react';
 import {

@@ -2,7 +2,7 @@ import React from 'react';
 import type {
   CurrentConditionData,
   FivedaysFcstData,
-} from '../../../types/queryDatatype';
+} from '../../../graphql/types/queryDatatypes';
 
 interface TitleProps {
   currentConditionData: CurrentConditionData;

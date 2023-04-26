@@ -5,7 +5,7 @@ import { IoMdTime } from 'react-icons/io';
 import type {
   FivedaysFcstData,
   TwelveHoursFcstData,
-} from '../../../types/queryDatatype';
+} from '../../../graphql/types/queryDatatypes';
 import WeatherIcon from '../Common/WeatherIcon';
 
 interface TwelveFcstProps {
