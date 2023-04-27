@@ -1,7 +1,7 @@
 import {
   ApolloClient,
   ApolloError,
-  NormalizedCacheObject,
+  type NormalizedCacheObject,
 } from '@apollo/client';
 import {
   GEOPOSITION_SEARCH_QUERY,
@@ -10,7 +10,7 @@ import {
   TWELVEHOURS_FCST_QUERY,
   AIR_QUALITY_KHAIVALUES_QUERY,
 } from '../../../graphql/client/queryClient';
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import React, { Component, type ReactNode } from 'react';
 
 interface ApiErrorBoundaryProps {
   children: ReactNode;
