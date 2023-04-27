@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import {
+import type {
   CurrentConditionData,
   FivedaysFcstData,
 } from '../../../graphql/types/queryDatatypes';
 import { BsSunsetFill, BsSunriseFill } from 'react-icons/bs';
 import timeConv from '../../../utils/timeConv';
-import Modal from '../Common/Modal';
+import ModalContainer from '../Common/ModalContainer';
 
 interface Sun_GridItemProps {
   currentConditionData: CurrentConditionData;
@@ -26,8 +26,7 @@ const Sun_GridItem = ({
   );
 
   const modalMessage = {
-    주요오염물질:
-      '미세먼지는 흡힙될 정도로 작으며 일반적으로 건설, 농업, 사막의 먼지 또는 꽃가루에 의해 발생합니다.',
+    title: IsDayTime ? '일몰' : '일출',
   };
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -55,26 +54,18 @@ const Sun_GridItem = ({
             <span className="text-2xl">{sunriseTime}</span>
           </>
         )}
-        {isModalOpen ? (
-          <Modal
-            isModalOpen={isModalOpen}
-            modalMessage={modalMessage}
-            handleModal={handleModal}
-          />
-        ) : (
-          <Modal
-            isModalOpen={isModalOpen}
-            modalMessage={modalMessage}
-            handleModal={handleModal}
-          />
-        )}
-      </div>
-      {isModalOpen ? (
-        <div
-          className="fixed top-0 left-0 w-full h-full z-10 cursor-pointer"
-          onClick={handleModal}
+        <ModalContainer
+          isModalOpen={isModalOpen}
+          modalMessage={modalMessage}
+          handleModal={handleModal}
         />
-      ) : null}
+      </div>
+      <div
+        className={`${
+          isModalOpen ? 'block' : 'hidden'
+        } fixed top-0 left-0 w-full h-full z-10 cursor-pointer`}
+        onClick={handleModal}
+      />
     </>
   );
 };

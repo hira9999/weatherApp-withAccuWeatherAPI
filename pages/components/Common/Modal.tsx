@@ -17,6 +17,7 @@ const Modal = ({ isModalOpen, modalMessage, handleModal }: ModalProps) => {
         } duration-150 rounded-lg absolute z-20 w-52 h-52 transition -right-[225px] -top-6 bg-[#262626] border-[#5D6C80] border-[1px] outline outline-[1px] outline-black shadow-md`}
       >
         <div className="flex flex-col bg-[#262626] absolute z-20 w-full h-full rounded-lg scrollbar-hide overflow-y-scroll">
+          {/* 툴팁 메시지가 표시되는곳 */}
           <div className="flex justify-center sticky top-0 bg-[#262626] text-white font-extrabold w-full p-1.5">
             {modalMessage.title}
           </div>

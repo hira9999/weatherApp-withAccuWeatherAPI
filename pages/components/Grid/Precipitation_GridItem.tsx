@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-
-import {
+import type {
   CurrentConditionData,
   PrecipitationSummary,
 } from '../../../graphql/types/queryDatatypes';
 import { GiWaterDrop } from 'react-icons/gi';
-import Modal from '../Common/Modal';
+import ModalContainer from '../Common/ModalContainer';
 interface Precipitation_GridItemProps {
   currentConditionData: CurrentConditionData;
 }
@@ -56,26 +55,18 @@ const Precipitation_GridItem = ({
           </span>
           <span className="text-lg">{maxPrecipitationPastHour?.key}</span>
         </div>
-        {isModalOpen ? (
-          <Modal
-            isModalOpen={isModalOpen}
-            modalMessage={modalMessage}
-            handleModal={handleModal}
-          />
-        ) : (
-          <Modal
-            isModalOpen={isModalOpen}
-            modalMessage={modalMessage}
-            handleModal={handleModal}
-          />
-        )}
-      </div>
-      {isModalOpen ? (
-        <div
-          className="fixed top-0 left-0 w-full h-full z-10 cursor-pointer"
-          onClick={handleModal}
+        <ModalContainer
+          isModalOpen={isModalOpen}
+          modalMessage={modalMessage}
+          handleModal={handleModal}
         />
-      ) : null}
+      </div>
+      <div
+        className={`${
+          isModalOpen ? 'block' : 'hidden'
+        } fixed top-0 left-0 w-full h-full z-10 cursor-pointer`}
+        onClick={handleModal}
+      />
     </>
   );
 };
