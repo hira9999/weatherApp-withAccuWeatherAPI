@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { CurrentConditionData } from '../../../graphql/types/queryDatatypes';
+import type { CurrentConditionData } from '../../graphql/types/queryDatatypes';
 import { MdOutlineAir } from 'react-icons/md';
 import ModalContainer from '../Common/ModalContainer';
 

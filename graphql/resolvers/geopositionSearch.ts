@@ -1,4 +1,3 @@
-import axiosInstence from '../api/axiosInstence';
 import qs from 'querystring';
 import { location } from '../../fakeApi/current';
 

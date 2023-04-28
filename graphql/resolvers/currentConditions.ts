@@ -1,7 +1,5 @@
-import axiosInstance from '../api/axiosInstence';
 import qs from 'querystring';
 import { fakeCurrent } from '../../fakeApi/current';
-import dfs_xy_conv from '../utils/dfs_xy_conv';
 
 interface LocationKey {
   locationKey: string;

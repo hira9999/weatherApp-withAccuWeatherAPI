@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { CurrentConditionData } from '../../../graphql/types/queryDatatypes';
+import type { CurrentConditionData } from '../../graphql/types/queryDatatypes';
 import { WiHumidity } from 'react-icons/wi';
 import ModalContainer from '../Common/ModalContainer';
 

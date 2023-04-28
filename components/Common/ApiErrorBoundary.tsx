@@ -9,7 +9,7 @@ import {
   FIVEDAYS_FCST_QUERY,
   TWELVEHOURS_FCST_QUERY,
   AIR_QUALITY_KHAIVALUES_QUERY,
-} from '../../../graphql/client/queryClient';
+} from '../../graphql/client/queryClient';
 import React, { Component, type ReactNode } from 'react';
 
 interface ApiErrorBoundaryProps {

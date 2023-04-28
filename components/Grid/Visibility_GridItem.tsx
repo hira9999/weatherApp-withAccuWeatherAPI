@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { CurrentConditionData } from '../../../graphql/types/queryDatatypes';
+import type { CurrentConditionData } from '../../graphql/types/queryDatatypes';
 import { IoEyeSharp } from 'react-icons/io5';
 import ModalContainer from '../Common/ModalContainer';
 

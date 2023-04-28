@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import type {
   CurrentConditionData,
   FivedaysFcstData,
-} from '../../../graphql/types/queryDatatypes';
+} from '../../graphql/types/queryDatatypes';
 import { BsSunsetFill, BsSunriseFill } from 'react-icons/bs';
-import timeConv from '../../../utils/timeConv';
+import timeConv from '../../utils/timeConv';
 import ModalContainer from '../Common/ModalContainer';
 
 interface Sun_GridItemProps {

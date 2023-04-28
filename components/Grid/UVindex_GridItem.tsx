@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { CurrentConditionData } from '../../../graphql/types/queryDatatypes';
+import type { CurrentConditionData } from '../../graphql/types/queryDatatypes';
 import { BsFillSunFill } from 'react-icons/bs';
 import ModalContainer from '../Common/ModalContainer';
 

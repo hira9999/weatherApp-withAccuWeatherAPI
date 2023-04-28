@@ -1,8 +1,8 @@
 import React from 'react';
-import type { FivedaysFcstData } from '../../../graphql/types/queryDatatypes';
+import type { FivedaysFcstData } from '../../graphql/types/queryDatatypes';
 import { AiTwotoneCalendar } from 'react-icons/ai';
-import getDayOfWeek from '../../../utils/getDayOfWeek';
-import getFivdaysMinMaxTemp from '../../../utils/getFivedaysMinMaxTemp';
+import getDayOfWeek from '../../utils/getDayOfWeek';
+import getFivdaysMinMaxTemp from '../../utils/getFivedaysMinMaxTemp';
 import WeatherIcon from '../Common/WeatherIcon';
 
 interface FivedaysFcstProps {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { WiDust } from 'react-icons/wi';
-import getAirQualityStatus from '../../../utils/getAirQualityStatus';
+import getAirQualityStatus from '../../utils/getAirQualityStatus';
 import ModalContainer from '../Common/ModalContainer';
 
 interface AirQuality_GridItem_Props {

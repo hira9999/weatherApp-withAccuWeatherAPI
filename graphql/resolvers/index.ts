@@ -1,4 +1,4 @@
-import { ContextValue } from '../../pages/api/graphql';
+import type { ContextValue } from '../../pages/api/graphql';
 
 interface LatLng {
   latLng: {

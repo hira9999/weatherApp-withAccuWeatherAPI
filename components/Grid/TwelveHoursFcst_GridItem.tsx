@@ -1,11 +1,11 @@
 import React from 'react';
-import timeConv from '../../../utils/timeConv';
+import timeConv from '../../utils/timeConv';
 import { BsSunsetFill, BsSunriseFill } from 'react-icons/bs';
 import { IoMdTime } from 'react-icons/io';
 import type {
   FivedaysFcstData,
   TwelveHoursFcstData,
-} from '../../../graphql/types/queryDatatypes';
+} from '../../graphql/types/queryDatatypes';
 import WeatherIcon from '../Common/WeatherIcon';
 
 interface TwelveFcstProps {

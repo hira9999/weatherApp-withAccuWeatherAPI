@@ -1,4 +1,3 @@
-import axiosInstance from '../api/axiosInstence';
 import qs from 'querystring';
 import { days } from '../../fakeApi/current';
 

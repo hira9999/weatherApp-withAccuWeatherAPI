@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import type {
   CurrentConditionData,
   PrecipitationSummary,
-} from '../../../graphql/types/queryDatatypes';
+} from '../../graphql/types/queryDatatypes';
 import { GiWaterDrop } from 'react-icons/gi';
 import ModalContainer from '../Common/ModalContainer';
 interface Precipitation_GridItemProps {
