@@ -1,4 +1,4 @@
-import { FivedaysFcstData } from '../graphql/types/queryDatatypes';
+import type { FivedaysFcstData } from '../graphql/types/queryDatatypes';
 
 function getFivdaysMinMaxTemp(fivedaysFcstData: FivedaysFcstData) {
   const minimumTempArr = fivedaysFcstData.getFiveDaysFcst.DailyForecasts.map(
