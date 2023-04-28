@@ -19,13 +19,13 @@ import {
   AIR_QUALITY_KHAIVALUES_QUERY,
 } from '../graphql/client/queryClient';
 
-import Title from './components/Common/Title';
-import WeatherGrid from './components/Grid/WeatherGrid';
+import Title from '../components/Common/Title';
+import WeatherGrid from '../components/Grid/WeatherGrid';
 import cityNameConv from '../utils/cityNameConv';
 import calculateCIAverage from '../utils/calculateCIAverage';
-import ErrorBar from './components/Common/ErrorBar';
+import ErrorBar from '../components/Common/ErrorBar';
 import { MoonLoader } from 'react-spinners';
-import Header from './components/Common/Header';
+import Header from '../components/Common/Header';
 
 const Home: NextPage = () => {
   const [geolocationPositionError, setGeolocationPositionError] = useState<
@@ -33,13 +33,13 @@ const Home: NextPage = () => {
   >(undefined);
   const [navigatorPermission, setNavigatorPermission] =
     useState<boolean>(false);
+
   const [
     getLocation,
     {
       data: LocationData,
-      loading: locationDataLoading,
       error: locationDataError,
-      called: locationDataCalled,
+      refetch: locationDataRefetch,
     },
   ] = useLazyQuery<Location, LatLng>(GEOPOSITION_SEARCH_QUERY, {
     onCompleted: (data) => {
@@ -77,19 +77,17 @@ const Home: NextPage = () => {
     getCurrentCondition,
     {
       data: currentConditionData,
-      loading: currentConditionDataLoading,
-      called: currentConditionDataCalled,
       error: currentConditionDataError,
       refetch: currentConditionRefetch,
     },
-  ] = useLazyQuery<CurrentConditionData, LocationKey>(CURRENTCONDITIONS_QUERY);
+  ] = useLazyQuery<CurrentConditionData, LocationKey>(CURRENTCONDITIONS_QUERY, {
+    pollInterval: 1000 * 60 * 10, // 10분마다 새로고침
+  });
 
   const [
     getFiveDaysFcst,
     {
       data: fivedaysFcstData,
-      loading: fivedaysFcstDataLoading,
-      called: fivedaysFcstDataCalled,
       error: fiveDaysFcstDataError,
       refetch: fivedaysFcstDataRefetch,
     },
@@ -99,8 +97,6 @@ const Home: NextPage = () => {
     getTwelveHoursFcst,
     {
       data: twelveHoursFcstData,
-      loading: twelveHoursFcstDataLoading,
-      called: twelveHoursFcstDataCalled,
       error: twelveHoursFcstDataError,
       refetch: twelveHoursFcstRefetch,
     },
@@ -110,8 +106,6 @@ const Home: NextPage = () => {
     getKhaiValues,
     {
       data: KhaiValuesData,
-      loading: KhaiValuesDataLoading,
-      called: KhaiValuesDataCalled,
       error: KhaiValuesDataError,
       refetch: KhaiValuesRefetch,
     },
@@ -119,54 +113,80 @@ const Home: NextPage = () => {
     AIR_QUALITY_KHAIVALUES_QUERY
   );
 
-  const getWeatherWithLocationFisrt = async (position: GeolocationPosition) => {
-    const latitude = position.coords.latitude; // 위도
-    const longitude = position.coords.longitude; // 경도
-    getLocation({
-      variables: {
-        latLng: {
-          lat: latitude,
-          lng: longitude,
-        },
-      },
-    });
-  };
-
-  const getWeatherByLocationInfo = async (locationInfo: string) => {
-    const { key, localizedName, administrativeArea } = JSON.parse(locationInfo);
-    const locationNameConverted = cityNameConv(localizedName);
-    getKhaiValues({
-      variables: { sidoName: locationNameConverted, locationKey: key },
-    });
-    getCurrentCondition({
-      variables: { locationKey: key },
-    });
-    getFiveDaysFcst({
-      variables: { locationKey: key },
-    });
-    getTwelveHoursFcst({
-      variables: { locationKey: key },
-    });
-  };
-
-  useEffect(() => {
-    const locationInfo = localStorage.getItem('locationInfo');
-    if (locationInfo) {
-      getWeatherByLocationInfo(locationInfo);
-      return;
-    }
-
+  const getWeatherWithLocationFisrt = async () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
-          getWeatherWithLocationFisrt(position);
+          console.log(position);
+          const latitude = position.coords.latitude; // 위도
+          const longitude = position.coords.longitude; // 경도
+          getLocation({
+            variables: {
+              latLng: {
+                lat: latitude,
+                lng: longitude,
+              },
+            },
+          });
         },
         (error) => {
           setGeolocationPositionError(error);
         }
       );
     }
+  };
+
+  const getWeatherByLocationInfo = async () => {
+    const locationInfo = localStorage.getItem('locationInfo');
+    if (locationInfo) {
+      const { key, localizedName, administrativeArea } =
+        JSON.parse(locationInfo);
+      const locationNameConverted = cityNameConv(localizedName);
+      getKhaiValues({
+        variables: { sidoName: locationNameConverted, locationKey: key },
+      });
+      getCurrentCondition({
+        variables: { locationKey: key },
+      });
+      getFiveDaysFcst({
+        variables: { locationKey: key },
+      });
+      getTwelveHoursFcst({
+        variables: { locationKey: key },
+      });
+      return;
+    }
+    //위치정보가 없을경우
+    getWeatherWithLocationFisrt();
+  };
+
+  useEffect(() => {
+    const locationInfo = localStorage.getItem('locationInfo');
+    if (locationInfo) {
+      getWeatherByLocationInfo();
+      return;
+    }
+    getWeatherWithLocationFisrt();
   }, [navigatorPermission]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const seconds = now.getSeconds();
+
+      if (hours === 0 && minutes === 3 && seconds === 0) {
+        fivedaysFcstDataRefetch();
+      }
+      if (minutes === 3 && seconds === 0) {
+        twelveHoursFcstRefetch();
+        KhaiValuesRefetch();
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const CIAaverage = calculateCIAverage(
     KhaiValuesData?.getCtprvnRltmMesureDnsty?.khaiValues
@@ -178,7 +198,7 @@ const Home: NextPage = () => {
     day: 'from-[#094F91] to-[#ABC9E8]',
   };
 
-  const IsDayTime = currentConditionData?.getCurrentCondition;
+  const IsDayTime = currentConditionData?.getCurrentCondition.IsDayTime;
 
   const handlePermissionChange = () => {
     navigator.permissions.query({ name: 'geolocation' }).then((permission) => {
@@ -212,16 +232,19 @@ const Home: NextPage = () => {
 
   return (
     <div
-      className={`${daytimeColor[IsDayTime ? 'day' : 'night']} ${
-        daytimeColor['day']
-      } h-full bg-gradient-to-b text-lg overflow-y-hidden`}
+      className={`${
+        daytimeColor[IsDayTime ? 'day' : 'night']
+      }} h-full bg-gradient-to-b text-lg overflow-y-hidden`}
     >
-      {/* 에러가 있을때만 보여주는 에러바 입니다. */}
+      {/* 위치엑세스에러가 있을때만 보여주는 에러바 입니다. */}
       <ErrorBar
         error={geolocationPositionError}
         handlePermissionChange={handlePermissionChange}
       />
-      <Header />
+      <Header
+        refetchAllWeatherData={getWeatherByLocationInfo}
+        findAccurateLocation={getWeatherWithLocationFisrt}
+      />
 
       <div className="flex justify-center items-center h-full w-[980px] mx-auto">
         {allQueriesCompleted ? (
