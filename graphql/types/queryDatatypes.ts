@@ -118,36 +118,39 @@ export interface PrecipitationSummary {
   Past24Hours: Metric;
 }
 
-export interface CurrentConditionData {
-  getCurrentCondition: {
-    LocalObservationDateTime: string;
-    WeatherIcon: number;
-    PrecipitationType: number;
-    Pressure: Metric;
-    ApparentTemperature: Metric;
-    Ceiling: Metric;
-    Visibility: Metric;
-    RelativeHumidity: number;
-    IndoorRelativeHumidity: number;
-    RealFeelTemperature: Metric;
-    IsDayTime: boolean;
-    UVIndex: number;
-    UVIndexText: string;
-    WeatherText: string;
-    CloudCover: number;
-    Temperature: Metric;
-    DewPoint: Metric;
-    Wind: Wind;
-    PrecipitationSummary: PrecipitationSummary;
-  };
+export interface GetCurrentCondition {
+  LocalObservationDateTime: string;
+  WeatherIcon: number;
+  PrecipitationType: number;
+  Pressure: Metric;
+  ApparentTemperature: Metric;
+  Ceiling: Metric;
+  Visibility: Metric;
+  RelativeHumidity: number;
+  IndoorRelativeHumidity: number;
+  RealFeelTemperature: Metric;
+  IsDayTime: boolean;
+  UVIndex: number;
+  UVIndexText: string;
+  WeatherText: string;
+  CloudCover: number;
+  Temperature: Metric;
+  DewPoint: Metric;
+  Wind: Wind;
+  PrecipitationSummary: PrecipitationSummary;
 }
 
+export interface CurrentConditionData {
+  getCurrentCondition: GetCurrentCondition;
+}
+
+export interface GetFiveDaysFcst {
+  Headline: Headline;
+  DailyForecasts: DailyForecasts[];
+  locationKey: string;
+}
 export interface FivedaysFcstData {
-  getFiveDaysFcst: {
-    Headline: Headline;
-    DailyForecasts: DailyForecasts[];
-    locationKey: string;
-  };
+  getFiveDaysFcst: GetFiveDaysFcst;
 }
 
 export interface TwelveHoursFcstData {
