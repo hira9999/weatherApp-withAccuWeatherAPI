@@ -26,6 +26,7 @@ import calculateCIAverage from '../utils/calculateCIAverage';
 import ErrorBar from '../components/Common/ErrorBar';
 import { MoonLoader } from 'react-spinners';
 import Header from '../components/Common/Header';
+import getCurrentSkyColor from '../utils/getCurrentSkyColor';
 
 const Home: NextPage = () => {
   const [geolocationPositionError, setGeolocationPositionError] = useState<
@@ -117,7 +118,6 @@ const Home: NextPage = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
-          console.log(position);
           const latitude = position.coords.latitude; // 위도
           const longitude = position.coords.longitude; // 경도
           getLocation({
@@ -192,14 +192,6 @@ const Home: NextPage = () => {
     KhaiValuesData?.getCtprvnRltmMesureDnsty?.khaiValues
   );
 
-  const daytimeColor = {
-    dawn: 'from-[#1B2A4A] to-[#7D6180]',
-    night: 'from-[#05051C] to-[#334461]',
-    day: 'from-[#094F91] to-[#ABC9E8]',
-  };
-
-  const IsDayTime = currentConditionData?.getCurrentCondition.IsDayTime;
-
   const handlePermissionChange = () => {
     navigator.permissions.query({ name: 'geolocation' }).then((permission) => {
       if (permission.state === 'granted') {
@@ -230,11 +222,17 @@ const Home: NextPage = () => {
     throw new ApolloError(firstError!);
   }
 
+  const skyColor = getCurrentSkyColor(
+    currentConditionData?.getCurrentCondition,
+    fivedaysFcstData?.getFiveDaysFcst
+  );
+
   return (
     <div
-      className={`${
-        daytimeColor[IsDayTime ? 'day' : 'night']
-      }} h-full bg-gradient-to-b text-lg overflow-y-hidden`}
+      className="h-full text-lg overflow-scroll sm:h-screen sm:overflow-y-hidden"
+      style={{
+        background: `linear-gradient(${skyColor})`,
+      }}
     >
       {/* 위치엑세스에러가 있을때만 보여주는 에러바 입니다. */}
       <ErrorBar
@@ -246,20 +244,22 @@ const Home: NextPage = () => {
         findAccurateLocation={getWeatherWithLocationFisrt}
       />
 
-      <div className="flex justify-center items-center h-full w-[980px] mx-auto">
+      <div className="flex justify-center items-center h-full mx-auto w-full pt-40 pb-10 sm:pt-0 sm:pb-0 sm:w-[980px]">
         {allQueriesCompleted ? (
-          <div className="flex flex-col justify-center w-full h-full px-[20px]">
-            <Title
-              currentConditionData={currentConditionData}
-              fivedaysFcstData={fivedaysFcstData}
-            />
-            <WeatherGrid
-              currentConditionData={currentConditionData}
-              twelveHoursFcstData={twelveHoursFcstData}
-              fivedaysFcstData={fivedaysFcstData}
-              CIAaverage={CIAaverage}
-            />
-          </div>
+          <>
+            <div className="flex flex-col justify-center w-full h-full px-[10px] sm:px-[20px]">
+              <Title
+                currentConditionData={currentConditionData}
+                fivedaysFcstData={fivedaysFcstData}
+              />
+              <WeatherGrid
+                currentConditionData={currentConditionData}
+                twelveHoursFcstData={twelveHoursFcstData}
+                fivedaysFcstData={fivedaysFcstData}
+                CIAaverage={CIAaverage}
+              />
+            </div>
+          </>
         ) : (
           <MoonLoader />
         )}
