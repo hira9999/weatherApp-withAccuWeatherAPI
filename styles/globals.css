@@ -30,7 +30,7 @@ input[type='range']::-webkit-slider-thumb {
 }
 
 .grid-item {
-  @apply flex flex-col border-[1px] border-white/20 rounded-md p-2 w-full h-[150px] bg-[#094F91] bg-opacity-20 active:opacity-70 relative;
+  @apply flex flex-col relative border-[1px] border-white/20 rounded-md w-full h-[150px] bg-[#094F91]/20 active:opacity-70;
 }
 
 .grid-title {
@@ -68,8 +68,6 @@ input[type='range']::-webkit-slider-thumb {
 
 html,
 body {
-  @apply bg-gradient-to-b from-[#094F91] to-[#ABC9E8];
-  height: 100vh;
   color: white;
   position: relative;
   cursor: default;
