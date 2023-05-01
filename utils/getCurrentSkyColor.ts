@@ -22,7 +22,6 @@ const getCurrentSkyColor = (
   const sunsetTime = new Date(
     getFiveDaysFcst?.DailyForecasts[0].Sun.Set || 0
   ).getTime();
-  console.log(isDayTime);
 
   if (
     getCurrentCondition?.PrecipitationSummary.Past3Hours.Metric.Value ||
