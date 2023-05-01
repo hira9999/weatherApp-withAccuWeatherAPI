@@ -3,7 +3,7 @@ import Modal from './Modal';
 
 interface ModalContainerProps {
   isModalOpen: boolean;
-  modalMessage: {
+  modalContent: {
     [key: string]: string;
   };
   handleModal: () => void;
@@ -11,7 +11,7 @@ interface ModalContainerProps {
 
 const ModalContainer = ({
   isModalOpen,
-  modalMessage,
+  modalContent,
   handleModal,
 }: ModalContainerProps) => {
   return (
@@ -19,13 +19,13 @@ const ModalContainer = ({
       {isModalOpen ? (
         <Modal
           isModalOpen={isModalOpen}
-          modalMessage={modalMessage}
+          modalContent={modalContent}
           handleModal={handleModal}
         />
       ) : (
         <Modal
           isModalOpen={isModalOpen}
-          modalMessage={modalMessage}
+          modalContent={modalContent}
           handleModal={handleModal}
         />
       )}
