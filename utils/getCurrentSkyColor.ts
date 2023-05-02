@@ -24,17 +24,17 @@ const getCurrentSkyColor = (
   ).getTime();
 
   if (
-    getCurrentCondition?.PrecipitationSummary.Past3Hours.Metric.Value ||
-    0 >= 1
+    getCurrentCondition &&
+    getCurrentCondition.PrecipitationSummary.Past3Hours.Metric.Value >= 1
   ) {
     return daytimeColor['rain'];
   }
   // 현재시간으로부터 일몰이 30분전부터 'dawn'을 출력
-  if (isDayTime && sunsetTime - now >= 1000 * 60 * 30) {
+  if (isDayTime && sunsetTime - now <= 1000 * 60 * 30) {
     return daytimeColor['dawn'];
   }
-
-  if (!isDayTime && sunriseTime - now >= 1000 * 60 * 30) {
+  // 현재시간으로부터 일출 30분전부터 'dawn'을 출력
+  if (!isDayTime && sunriseTime - now <= 1000 * 60 * 30) {
     return daytimeColor['dawn'];
   }
 
