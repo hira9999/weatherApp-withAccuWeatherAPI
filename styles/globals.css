@@ -70,6 +70,7 @@ html,
 body {
   color: white;
   position: relative;
+  background: linear-gradient(to bottom, #094f91, #abc9e8);
   cursor: default;
   padding: 0;
   margin: 0;
