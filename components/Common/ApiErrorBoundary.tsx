@@ -33,7 +33,7 @@ class APIErrorBoundary extends Component<
 
   static getDerivedStateFromError(error: ApolloError) {
     console.error(error);
-    return { hasError: true, path: error.graphQLErrors[0].path };
+    return { hasError: true, path: error.graphQLErrors[0].path || null };
   }
 
   async handleRefetchQueries() {
