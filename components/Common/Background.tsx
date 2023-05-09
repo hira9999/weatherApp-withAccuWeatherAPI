@@ -33,7 +33,7 @@ const Background = ({
   const pasthourPrecipitation =
     currentConditionData.getCurrentCondition.PrecipitationSummary.PastHour
       .Metric.Value;
-
+  const UVindex = currentConditionData.getCurrentCondition.UVIndex;
   return (
     <div
       className="h-full text-lg overflow-scroll sm:h-screen sm:overflow-y-hidden relative transition-colors duration-500"
@@ -41,6 +41,7 @@ const Background = ({
         background: `linear-gradient(${skyColor})`,
       }}
     >
+      <Sun UVindex={UVindex} />
       {!isDayTime && <Stars />}
       {cloudCover > 30 && <Cloud cloudCover={cloudCover} />}
       {precipitationType === 'Rain' && <Rain />}
