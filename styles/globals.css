@@ -1,6 +1,40 @@
 @tailwind base;
 @tailwind components;
 
+.snowdrop {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #ffffff;
+  position: absolute;
+  transform-origin: 100% 50%;
+  animation: drops 2s linear infinite;
+}
+
+.raindrop {
+  width: 18px;
+  height: 3px;
+  border-radius: 50%;
+  background: #ffffff;
+  position: absolute;
+  transform-origin: 100% 50%;
+  animation: drops 2s linear infinite;
+}
+
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: white;
+  transform-origin: 100% 50%;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+.cloud {
+  position: absolute;
+  animation: move calc(300s * var(--i)) linear infinite;
+  max-width: 100%;
+}
+
 input[type='range'] {
   width: 100%;
   -webkit-appearance: none;
@@ -30,7 +64,7 @@ input[type='range']::-webkit-slider-thumb {
 }
 
 .grid-item {
-  @apply flex flex-col relative border-[1px] border-white/20 rounded-md w-full h-[150px] bg-[#094F91]/20 active:opacity-70;
+  @apply flex flex-col relative border-[1px] border-white/20 rounded-2xl sm:rounded-md w-full h-[150px] bg-[#094F91]/20 active:opacity-70;
 }
 
 .grid-title {
@@ -85,4 +119,34 @@ body {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+@keyframes move {
+  0% {
+    transform: translateX(80%) rotate(180deg);
+  }
+  100% {
+    transform: translateX(-100%) rotate(180deg);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes drops {
+  from {
+    transform: rotate(90deg) translateX(0);
+  }
+  to {
+    transform: rotate(90deg) translateX(calc(100vh + 20px));
+  }
 }
