@@ -26,7 +26,8 @@ import calculateCIAverage from '../utils/calculateCIAverage';
 import ErrorBar from '../components/Common/ErrorBar';
 import { MoonLoader } from 'react-spinners';
 import Header from '../components/Common/Header';
-import getCurrentSkyColor from '../utils/getCurrentSkyColor';
+import Background from '../components/Common/Background';
+import Footer from '../components/Common/Footer';
 
 const Home: NextPage = () => {
   const [geolocationPositionError, setGeolocationPositionError] = useState<
@@ -82,7 +83,7 @@ const Home: NextPage = () => {
       refetch: currentConditionRefetch,
     },
   ] = useLazyQuery<CurrentConditionData, LocationKey>(CURRENTCONDITIONS_QUERY, {
-    pollInterval: 1000 * 60 * 10, // 10분마다 새로고침
+    pollInterval: 1000 * 60 * 60, // 60분마다 새로고침
   });
 
   const [
@@ -180,6 +181,7 @@ const Home: NextPage = () => {
         fivedaysFcstDataRefetch();
       }
       if (minutes === 3 && seconds === 0) {
+        console.log('3분마다 새로고침');
         twelveHoursFcstRefetch();
         KhaiValuesRefetch();
       }
@@ -222,31 +224,24 @@ const Home: NextPage = () => {
     throw new ApolloError(firstError!);
   }
 
-  const skyColor = getCurrentSkyColor(
-    currentConditionData?.getCurrentCondition,
-    fivedaysFcstData?.getFiveDaysFcst
-  );
-
   return (
-    <div
-      className="h-full text-lg overflow-scroll sm:h-screen sm:overflow-y-hidden"
-      style={{
-        background: `linear-gradient(${skyColor})`,
-      }}
-    >
-      {/* 위치엑세스에러가 있을때만 보여주는 에러바 입니다. */}
-      <ErrorBar
-        error={geolocationPositionError}
-        handlePermissionChange={handlePermissionChange}
-      />
-      <Header
-        refetchAllWeatherData={getWeatherByLocationInfo}
-        findAccurateLocation={getWeatherWithLocationFisrt}
-      />
+    <>
+      {allQueriesCompleted ? (
+        <Background
+          currentConditionData={currentConditionData}
+          fivedaysFcstData={fivedaysFcstData}
+        >
+          {/* 위치엑세스에러가 있을때만 보여주는 에러바 입니다. */}
+          <ErrorBar
+            error={geolocationPositionError}
+            handlePermissionChange={handlePermissionChange}
+          />
+          <Header
+            refetchAllWeatherData={getWeatherByLocationInfo}
+            findAccurateLocation={getWeatherWithLocationFisrt}
+          />
 
-      <div className="flex justify-center items-center h-full mx-auto w-full pt-40 pb-10 sm:pt-0 sm:pb-0 sm:w-[980px]">
-        {allQueriesCompleted ? (
-          <>
+          <div className="flex justify-center items-center h-full mx-auto w-full pt-40 pb-10 sm:pt-0 sm:pb-0 sm:w-[980px]">
             <div className="flex flex-col justify-center w-full h-full px-[10px] sm:px-[20px]">
               <Title
                 currentConditionData={currentConditionData}
@@ -259,12 +254,13 @@ const Home: NextPage = () => {
                 CIAaverage={CIAaverage}
               />
             </div>
-          </>
-        ) : (
-          <MoonLoader />
-        )}
-      </div>
-    </div>
+          </div>
+          <Footer />
+        </Background>
+      ) : (
+        <MoonLoader />
+      )}
+    </>
   );
 };
 
