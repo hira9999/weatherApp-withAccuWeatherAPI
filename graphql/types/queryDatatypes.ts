@@ -121,7 +121,7 @@ export interface PrecipitationSummary {
 export interface GetCurrentCondition {
   LocalObservationDateTime: string;
   WeatherIcon: number;
-  PrecipitationType: number;
+  PrecipitationType: string;
   Pressure: Metric;
   ApparentTemperature: Metric;
   Ceiling: Metric;
