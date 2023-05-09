@@ -32,7 +32,7 @@ const WeatherGrid = ({
   CIAaverage,
 }: GridProps) => {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-6 sm:grid-rows-3 gap-[8px] text-sm">
+    <div className="grid grid-cols-2 gap-4 sm:grid-cols-6 sm:grid-rows-3 sm:gap-2 text-sm">
       <TwelveHoursFcst_GridItem
         twelveHoursFcstData={twelveHoursFcstData}
         fivedaysFcstData={fivedaysFcstData}
