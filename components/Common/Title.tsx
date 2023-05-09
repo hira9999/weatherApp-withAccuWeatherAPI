@@ -23,12 +23,12 @@ const Title = ({ currentConditionData, fivedaysFcstData }: TitleProps) => {
 
   return (
     <div className="flex flex-col items-center space-y-1 mb-10">
-      <h1 className="text-4xl shadow-md">{localizedName}</h1>
-      <h2 className="text-7xl font-extralight shadow-md">
+      <h1 className="text-4xl shadowed-text">{localizedName}</h1>
+      <h2 className="text-7xl shadowed-text font-extralight">
         {Math.round(Value)}°
       </h2>
-      <h3 className="text-xl shadow-md">{WeatherText}</h3>
-      <span className="text-xl shadow-md">{`최고${MaximumTemp}° 최저${MinimumTemp}°`}</span>
+      <h3 className="text-xl shadowed-text">{WeatherText}</h3>
+      <span className="text-xl shadowed-text">{`최고${MaximumTemp}° 최저${MinimumTemp}°`}</span>
     </div>
   );
 };
