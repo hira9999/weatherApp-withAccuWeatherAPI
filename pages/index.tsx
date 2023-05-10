@@ -177,15 +177,14 @@ const Home: NextPage = () => {
       const minutes = now.getMinutes();
       const seconds = now.getSeconds();
 
-      if (hours === 0 && minutes === 3 && seconds === 0) {
+      if (hours === 0 && minutes === 3) {
         fivedaysFcstDataRefetch();
       }
-      if (minutes === 3 && seconds === 0) {
-        console.log('3분마다 새로고침');
+      if (minutes === 3) {
         twelveHoursFcstRefetch();
         KhaiValuesRefetch();
       }
-    }, 1000);
+    }, 1000 * 60);
 
     return () => clearInterval(interval);
   }, []);
@@ -241,8 +240,8 @@ const Home: NextPage = () => {
             findAccurateLocation={getWeatherWithLocationFisrt}
           />
 
-          <div className="flex justify-center items-center h-full mx-auto w-full pt-40 pb-10 sm:pt-0 sm:pb-0 sm:w-[980px]">
-            <div className="flex flex-col justify-center w-full h-full px-[10px] sm:px-[20px]">
+          <div className="flex justify-center items-center h-full mx-auto w-full pt-40 pb-10 sm:pt-0 sm:pb-0 sm:w-[980px] sm:h-screen">
+            <div className="flex flex-col justify-center w-full h-full px-[14px] sm:px-[20px]">
               <Title
                 currentConditionData={currentConditionData}
                 fivedaysFcstData={fivedaysFcstData}
@@ -257,9 +256,7 @@ const Home: NextPage = () => {
           </div>
           <Footer />
         </Background>
-      ) : (
-        <MoonLoader />
-      )}
+      ) : null}
     </>
   );
 };
