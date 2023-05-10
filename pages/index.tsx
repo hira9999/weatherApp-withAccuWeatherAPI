@@ -241,7 +241,7 @@ export const getServerSideProps: GetServerSideProps<
 
   const locationByipAdress = await axios
     .get(
-      'http://dataservice.accuweather.com/locations/v1/cities/ipaddress/v1/cities/ipaddress',
+      'https://dataservice.accuweather.com/locations/v1/cities/ipaddress/v1/cities/ipaddress',
       {
         params: { apikey: process.env.ACCUWEATHER_API_KEY, q: ipAddress },
       }
