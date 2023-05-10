@@ -107,6 +107,7 @@ input[type='range']::-webkit-slider-thumb {
 html,
 body {
   color: white;
+  height: 100%;
   position: relative;
   background: linear-gradient(to bottom, #094f91, #abc9e8);
   cursor: default;
@@ -114,10 +115,6 @@ body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-}
-
-#__next {
-  height: 100%;
 }
 
 a {
