@@ -1,4 +1,6 @@
-import type { NextPage } from 'next';
+import type { GetServerSideProps, NextPage } from 'next';
+import IP from 'ip';
+import axios from 'axios';
 import type {
   Location,
   LatLng,
@@ -9,7 +11,7 @@ import type {
   AirQualityVariables,
   KhaiValueData,
 } from '../graphql/types/queryDatatypes';
-import { ApolloError, useLazyQuery } from '@apollo/client';
+import { ApolloError, useLazyQuery, useQuery } from '@apollo/client';
 import { useEffect, useState } from 'react';
 import {
   GEOPOSITION_SEARCH_QUERY,
@@ -29,7 +31,17 @@ import Header from '../components/Common/Header';
 import Background from '../components/Common/Background';
 import Footer from '../components/Common/Footer';
 
-const Home: NextPage = () => {
+interface HomeServerSideProps {
+  Key: string;
+  LocalizedName: string;
+  AdministrativeArea: string;
+}
+
+const Home: NextPage<HomeServerSideProps> = ({
+  Key,
+  LocalizedName,
+  AdministrativeArea,
+}) => {
   const [geolocationPositionError, setGeolocationPositionError] = useState<
     GeolocationPositionError | undefined
   >(undefined);
@@ -43,79 +55,60 @@ const Home: NextPage = () => {
       error: locationDataError,
       refetch: locationDataRefetch,
     },
-  ] = useLazyQuery<Location, LatLng>(GEOPOSITION_SEARCH_QUERY, {
-    onCompleted: (data) => {
-      const key = data.getLocation.Key;
-      const locationNameConverted = cityNameConv(
-        data.getLocation.LocalizedName
-      );
+  ] = useLazyQuery<Location, LatLng>(GEOPOSITION_SEARCH_QUERY);
 
-      localStorage.setItem(
-        'locationInfo',
-        JSON.stringify({
-          key,
-          localizedName: data.getLocation.LocalizedName,
-          administrativeArea: data.getLocation.AdministrativeArea.LocalizedName,
-        })
-      );
-
-      //키를 패치완료후 쿼리 수동실행
-      getKhaiValues({
-        variables: { sidoName: locationNameConverted, locationKey: key },
-      });
-      getCurrentCondition({
-        variables: { locationKey: key },
-      });
-      getFiveDaysFcst({
-        variables: { locationKey: key },
-      });
-      getTwelveHoursFcst({
-        variables: { locationKey: key },
-      });
-    },
-  });
-
-  const [
-    getCurrentCondition,
-    {
-      data: currentConditionData,
-      error: currentConditionDataError,
-      refetch: currentConditionRefetch,
-    },
-  ] = useLazyQuery<CurrentConditionData, LocationKey>(CURRENTCONDITIONS_QUERY, {
+  const {
+    data: currentConditionData,
+    error: currentConditionDataError,
+    refetch: currentConditionRefetch,
+  } = useQuery<CurrentConditionData, LocationKey>(CURRENTCONDITIONS_QUERY, {
+    variables: { locationKey: Key },
     pollInterval: 1000 * 60 * 60, // 60분마다 새로고침
   });
 
-  const [
-    getFiveDaysFcst,
-    {
-      data: fivedaysFcstData,
-      error: fiveDaysFcstDataError,
-      refetch: fivedaysFcstDataRefetch,
-    },
-  ] = useLazyQuery<FivedaysFcstData, LocationKey>(FIVEDAYS_FCST_QUERY);
+  const {
+    data: fivedaysFcstData,
+    error: fiveDaysFcstDataError,
+    refetch: fivedaysFcstDataRefetch,
+  } = useQuery<FivedaysFcstData, LocationKey>(FIVEDAYS_FCST_QUERY, {
+    variables: { locationKey: Key },
+  });
 
-  const [
-    getTwelveHoursFcst,
-    {
-      data: twelveHoursFcstData,
-      error: twelveHoursFcstDataError,
-      refetch: twelveHoursFcstRefetch,
-    },
-  ] = useLazyQuery<TwelveHoursFcstData, LocationKey>(TWELVEHOURS_FCST_QUERY);
+  const {
+    data: twelveHoursFcstData,
+    error: twelveHoursFcstDataError,
+    refetch: twelveHoursFcstRefetch,
+  } = useQuery<TwelveHoursFcstData, LocationKey>(TWELVEHOURS_FCST_QUERY, {
+    variables: { locationKey: Key },
+  });
 
-  const [
-    getKhaiValues,
-    {
-      data: KhaiValuesData,
-      error: KhaiValuesDataError,
-      refetch: KhaiValuesRefetch,
-    },
-  ] = useLazyQuery<KhaiValueData, AirQualityVariables>(
-    AIR_QUALITY_KHAIVALUES_QUERY
+  const {
+    data: KhaiValuesData,
+    error: KhaiValuesDataError,
+    refetch: KhaiValuesRefetch,
+  } = useQuery<KhaiValueData, AirQualityVariables>(
+    AIR_QUALITY_KHAIVALUES_QUERY,
+    { variables: { locationKey: Key, sidoName: cityNameConv(LocalizedName) } }
   );
 
-  const getWeatherWithLocationFisrt = async () => {
+  const refetchAllWeatherData = async (
+    locationKey?: string,
+    localizedName?: string
+  ) => {
+    if (locationKey && localizedName) {
+      currentConditionRefetch({ locationKey });
+      fivedaysFcstDataRefetch({ locationKey });
+      twelveHoursFcstRefetch({ locationKey });
+      KhaiValuesRefetch({ locationKey, sidoName: cityNameConv(localizedName) });
+    } else {
+      currentConditionRefetch();
+      fivedaysFcstDataRefetch();
+      twelveHoursFcstRefetch();
+      KhaiValuesRefetch();
+    }
+  };
+
+  const findAccurateLocation = async () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
@@ -128,6 +121,12 @@ const Home: NextPage = () => {
                 lng: longitude,
               },
             },
+            onCompleted: (data) => {
+              const { Key, LocalizedName } = data.getLocation;
+              //키가 다를시 새로운 데이터를 가져온다.
+              data.getLocation.Key !== Key &&
+                refetchAllWeatherData(Key, LocalizedName);
+            },
           });
         },
         (error) => {
@@ -137,45 +136,11 @@ const Home: NextPage = () => {
     }
   };
 
-  const getWeatherByLocationInfo = async () => {
-    const locationInfo = localStorage.getItem('locationInfo');
-    if (locationInfo) {
-      const { key, localizedName, administrativeArea } =
-        JSON.parse(locationInfo);
-      const locationNameConverted = cityNameConv(localizedName);
-      getKhaiValues({
-        variables: { sidoName: locationNameConverted, locationKey: key },
-      });
-      getCurrentCondition({
-        variables: { locationKey: key },
-      });
-      getFiveDaysFcst({
-        variables: { locationKey: key },
-      });
-      getTwelveHoursFcst({
-        variables: { locationKey: key },
-      });
-      return;
-    }
-    //위치정보가 없을경우
-    getWeatherWithLocationFisrt();
-  };
-
-  useEffect(() => {
-    const locationInfo = localStorage.getItem('locationInfo');
-    if (locationInfo) {
-      getWeatherByLocationInfo();
-      return;
-    }
-    getWeatherWithLocationFisrt();
-  }, [navigatorPermission]);
-
   useEffect(() => {
     const interval = setInterval(() => {
       const now = new Date();
       const hours = now.getHours();
       const minutes = now.getMinutes();
-      const seconds = now.getSeconds();
 
       if (hours === 0 && minutes === 3) {
         fivedaysFcstDataRefetch();
@@ -211,7 +176,7 @@ const Home: NextPage = () => {
     CIAaverage;
 
   const queryErrors = [
-    locationDataError,
+    //locationDataError,
     currentConditionDataError,
     fiveDaysFcstDataError,
     twelveHoursFcstDataError,
@@ -236,8 +201,8 @@ const Home: NextPage = () => {
             handlePermissionChange={handlePermissionChange}
           />
           <Header
-            refetchAllWeatherData={getWeatherByLocationInfo}
-            findAccurateLocation={getWeatherWithLocationFisrt}
+            refetchAllWeatherData={refetchAllWeatherData}
+            findAccurateLocation={findAccurateLocation}
           />
 
           <div className="flex justify-center items-center h-full mx-auto w-full pt-40 pb-10 sm:pt-0 sm:pb-0 sm:w-[980px] sm:h-screen">
@@ -262,3 +227,32 @@ const Home: NextPage = () => {
 };
 
 export default Home;
+
+interface LocationProps {
+  Key: string;
+  AdministrativeArea: string;
+  LocalizedName: string;
+}
+
+export const getServerSideProps: GetServerSideProps<
+  LocationProps
+> = async ({}) => {
+  const ipAddress = IP.address();
+
+  const locationByipAdress = await axios
+    .get(
+      'http://dataservice.accuweather.com/locations/v1/cities/ipaddress/v1/cities/ipaddress',
+      {
+        params: { apikey: process.env.ACCUWEATHER_API_KEY, q: ipAddress },
+      }
+    )
+    .then((res) => res.data);
+
+  return {
+    props: {
+      Key: locationByipAdress.Key,
+      AdministrativeArea: locationByipAdress.AdministrativeArea.LocalizedName,
+      LocalizedName: locationByipAdress.LocalizedName,
+    },
+  };
+};
