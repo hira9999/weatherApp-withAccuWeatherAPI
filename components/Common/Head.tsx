@@ -40,16 +40,22 @@ const Head = () => {
         <meta property="og:description" content="Take a rain check" />
         <meta property="og:url" content="https://eyeoftheTyphoon.vercel.app" />
         <meta property="og:site_name" content="EyeoftheTyphoon" />
-        <meta property="og:image" content="" />
+        <meta
+          property="og:image"
+          content="https://github.com/hira9999/weatherApp-withAccuWeatherAPI/raw/main/public/weatherApp-1200x630.png"
+        />
         <meta property="og:image:type" content="image/png" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
-
+        {/* twitter */}
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:title" content="EyeoftheTyphoon" />
         <meta name="twitter:description" content="Take a rain check" />
         <meta name="twitter:creator" content="hira99" />
-        <meta name="twitter:image" content="" />
+        <meta
+          name="twitter:image"
+          content="https://github.com/hira9999/weatherApp-withAccuWeatherAPI/raw/main/public/weatherApp-1200x630.png"
+        />
       </NextHead>
     </>
   );
