@@ -4,7 +4,8 @@ import type {
 } from '../graphql/types/queryDatatypes';
 
 const daytimeColor = {
-  dawn: 'to bottom, #1B2A4A, #7D6180',
+  sunrise: 'to bottom, #1B2A4A, #7D6180',
+  sunset: 'to bottom, #094F91, #E6D6C3',
   night: 'to bottom, #05051C, #334461',
   day: 'to bottom, #094F91, #ABC9E8',
   rain: 'to bottom, #485767, #485667',
@@ -31,7 +32,7 @@ const getCurrentSkyColor = (
   }
 
   if (isDayTime && sunsetTime - now <= 1000 * 60 * 30) {
-    return daytimeColor['dawn'];
+    return daytimeColor['sunset'];
   }
 
   if (
@@ -39,7 +40,7 @@ const getCurrentSkyColor = (
     sunsetTime - now > 0 &&
     sunriseTime - now <= 1000 * 60 * 30
   ) {
-    return daytimeColor['dawn'];
+    return daytimeColor['sunrise'];
   }
 
   if (isDayTime) {

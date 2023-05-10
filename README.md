@@ -32,3 +32,26 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+# 1. Eye of the Typhoon
+
+Next.js GraphQL를 기반
+아큐웨더 APIs 데이터 소스를 이용하여 ios16 날씨앱을 구현했습니다.
+
+### [Visit Site](https://eyeofthetyphoon.vercel.app/)
+
+# 2. Tech Stack
+
+[Next.js](https://nextjs.org)
+[Graphql]() [Typescript]() [Tailwindcss]()
+
+# Preview
+
+PC
+![PC](/public/weatherApp-1200x630.png)
+Mobile
+![Mobile](/public/weatherMobile.jpg)
+
+## Directories
+
+`page/components/Grid`
