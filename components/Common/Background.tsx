@@ -36,7 +36,7 @@ const Background = ({
   const UVindex = currentConditionData.getCurrentCondition.UVIndex;
   return (
     <div
-      className="h-full text-lg overflow-scroll sm:h-screen sm:overflow-y-hidden relative transition-colors duration-500"
+      className="w-full text-lg overflow-scroll sm:overflow-y-hidden relative"
       style={{
         background: `linear-gradient(${skyColor})`,
       }}
