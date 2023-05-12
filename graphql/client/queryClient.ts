@@ -9,6 +9,10 @@ const GEOPOSITION_SEARCH_QUERY = gql`
       AdministrativeArea {
         LocalizedName
       }
+      GeoPosition {
+        Latitude
+        Longitude
+      }
     }
   }
 `;

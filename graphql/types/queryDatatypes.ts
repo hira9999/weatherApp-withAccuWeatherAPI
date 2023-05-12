@@ -18,6 +18,10 @@ export interface Location {
     LocalizedName: string;
     id: string;
     AdministrativeArea: AdministrativeArea;
+    GeoPosition: {
+      Latitude: string;
+      Longitude: string;
+    };
   };
 }
 

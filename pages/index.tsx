@@ -1,5 +1,5 @@
 import type { GetServerSideProps, NextPage } from 'next';
-import IP from 'ip';
+import { publicIpv4 } from 'public-ip';
 import axios from 'axios';
 import type {
   Location,
@@ -23,39 +23,31 @@ import {
 
 import Title from '../components/Common/Title';
 import WeatherGrid from '../components/Grid/WeatherGrid';
-import cityNameConv from '../utils/cityNameConv';
 import calculateCIAverage from '../utils/calculateCIAverage';
 import ErrorBar from '../components/Common/ErrorBar';
 import { MoonLoader } from 'react-spinners';
 import Header from '../components/Common/Header';
 import Background from '../components/Common/Background';
 import Footer from '../components/Common/Footer';
+import getCityByLonLat from '../utils/minMatLonLatByCity';
 
 interface HomeServerSideProps {
   Key: string;
-  LocalizedName: string;
-  AdministrativeArea: string;
+  longitude: number;
+  latitude: number;
 }
 
-const Home: NextPage<HomeServerSideProps> = ({
-  Key,
-  LocalizedName,
-  AdministrativeArea,
-}) => {
+const Home: NextPage<HomeServerSideProps> = ({ Key, longitude, latitude }) => {
   const [geolocationPositionError, setGeolocationPositionError] = useState<
     GeolocationPositionError | undefined
   >(undefined);
   const [navigatorPermission, setNavigatorPermission] =
     useState<boolean>(false);
+  const city = getCityByLonLat(latitude, longitude);
 
-  const [
-    getLocation,
-    {
-      data: LocationData,
-      error: locationDataError,
-      refetch: locationDataRefetch,
-    },
-  ] = useLazyQuery<Location, LatLng>(GEOPOSITION_SEARCH_QUERY);
+  const [getLocation, {}] = useLazyQuery<Location, LatLng>(
+    GEOPOSITION_SEARCH_QUERY
+  );
 
   const {
     data: currentConditionData,
@@ -88,18 +80,28 @@ const Home: NextPage<HomeServerSideProps> = ({
     refetch: KhaiValuesRefetch,
   } = useQuery<KhaiValueData, AirQualityVariables>(
     AIR_QUALITY_KHAIVALUES_QUERY,
-    { variables: { locationKey: Key, sidoName: cityNameConv(LocalizedName) } }
+    {
+      variables: {
+        locationKey: Key,
+        sidoName: city,
+      },
+    }
   );
 
   const refetchAllWeatherData = async (
     locationKey?: string,
-    localizedName?: string
+    latitude?: string,
+    longitude?: string
   ) => {
-    if (locationKey && localizedName) {
+    if (locationKey && latitude && longitude) {
+      const sidoName = getCityByLonLat(latitude, longitude);
       currentConditionRefetch({ locationKey });
       fivedaysFcstDataRefetch({ locationKey });
       twelveHoursFcstRefetch({ locationKey });
-      KhaiValuesRefetch({ locationKey, sidoName: cityNameConv(localizedName) });
+      KhaiValuesRefetch({
+        locationKey,
+        sidoName,
+      });
     } else {
       currentConditionRefetch();
       fivedaysFcstDataRefetch();
@@ -122,10 +124,13 @@ const Home: NextPage<HomeServerSideProps> = ({
               },
             },
             onCompleted: (data) => {
-              const { Key, LocalizedName } = data.getLocation;
+              const {
+                Key,
+                GeoPosition: { Latitude, Longitude },
+              } = data.getLocation;
               //키가 다를시 새로운 데이터를 가져온다.
               data.getLocation.Key !== Key &&
-                refetchAllWeatherData(Key, LocalizedName);
+                refetchAllWeatherData(Key, Latitude, Longitude);
             },
           });
         },
@@ -146,7 +151,8 @@ const Home: NextPage<HomeServerSideProps> = ({
         fivedaysFcstDataRefetch();
       }
       if (minutes === 3) {
-        twelveHoursFcstRefetch();
+        currentConditionRefetch();
+        fivedaysFcstDataRefetch();
         KhaiValuesRefetch();
       }
     }, 1000 * 60);
@@ -221,7 +227,11 @@ const Home: NextPage<HomeServerSideProps> = ({
           </div>
           <Footer />
         </Background>
-      ) : null}
+      ) : (
+        <div className="flex justify-center items-center w-full h-full">
+          <MoonLoader />
+        </div>
+      )}
     </>
   );
 };
@@ -230,20 +240,28 @@ export default Home;
 
 interface LocationProps {
   Key: string;
-  AdministrativeArea: string;
-  LocalizedName: string;
+  latitude: number;
+  longitude: number;
 }
 
 export const getServerSideProps: GetServerSideProps<
   LocationProps
-> = async ({}) => {
-  const ipAddress = IP.address();
+> = async () => {
+  const ipAddress = await publicIpv4();
+
+  const location = await axios
+    .get(`https://ipapi.co/${ipAddress}/json/`)
+    .then((res) => res.data);
 
   const locationByipAdress = await axios
     .get(
-      'https://dataservice.accuweather.com/locations/v1/cities/ipaddress/v1/cities/ipaddress',
+      'http://dataservice.accuweather.com/locations/v1/cities/geoposition/search',
       {
-        params: { apikey: process.env.ACCUWEATHER_API_KEY, q: ipAddress },
+        params: {
+          apikey: process.env.ACCUWEATHER_API_KEY,
+          q: `${location.latitude},${location.longitude}`,
+          language: 'ko',
+        },
       }
     )
     .then((res) => res.data);
@@ -251,8 +269,8 @@ export const getServerSideProps: GetServerSideProps<
   return {
     props: {
       Key: locationByipAdress.Key,
-      AdministrativeArea: locationByipAdress.AdministrativeArea.LocalizedName,
-      LocalizedName: locationByipAdress.LocalizedName,
+      latitude: location.latitude,
+      longitude: location.longitude,
     },
   };
 };
