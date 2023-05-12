@@ -1,5 +1,4 @@
 import type { GetServerSideProps, NextPage } from 'next';
-import IP from 'ip';
 import { publicIpv4 } from 'public-ip';
 import axios from 'axios';
 import type {
@@ -46,14 +45,9 @@ const Home: NextPage<HomeServerSideProps> = ({ Key, longitude, latitude }) => {
     useState<boolean>(false);
   const city = getCityByLonLat(latitude, longitude);
 
-  const [
-    getLocation,
-    {
-      data: LocationData,
-      error: locationDataError,
-      refetch: locationDataRefetch,
-    },
-  ] = useLazyQuery<Location, LatLng>(GEOPOSITION_SEARCH_QUERY);
+  const [getLocation, {}] = useLazyQuery<Location, LatLng>(
+    GEOPOSITION_SEARCH_QUERY
+  );
 
   const {
     data: currentConditionData,
@@ -233,7 +227,11 @@ const Home: NextPage<HomeServerSideProps> = ({ Key, longitude, latitude }) => {
           </div>
           <Footer />
         </Background>
-      ) : null}
+      ) : (
+        <div className="flex justify-center items-center w-full h-full">
+          <MoonLoader />
+        </div>
+      )}
     </>
   );
 };
