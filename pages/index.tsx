@@ -247,33 +247,29 @@ interface LocationProps {
 export const getServerSideProps: GetServerSideProps<
   LocationProps
 > = async () => {
-  try {
-    const ipAddress = await publicIpv4();
+  const ipAddress = await publicIpv4();
 
-    const location = await axios
-      .get(`https://ipapi.co/${ipAddress}/json/`)
-      .then((res) => res.data);
+  const location = await axios
+    .get(`https://ipapi.co/${ipAddress}/json/`)
+    .then((res) => res.data);
 
-    const locationByipAdress = await axios
-      .get(
-        'http://dataservice.accuweather.com/locations/v1/cities/geoposition/search',
-        {
-          params: {
-            apikey: process.env.ACCUWEATHER_API_KEY,
-            q: `${location.latitude},${location.longitude}`,
-            language: 'ko',
-          },
-        }
-      )
-      .then((res) => res.data);
-    return {
-      props: {
-        Key: locationByipAdress.Key,
-        latitude: location.latitude,
-        longitude: location.longitude,
-      },
-    };
-  } catch (e) {
-    console.error(e);
-  }
+  const locationByipAdress = await axios
+    .get(
+      'http://dataservice.accuweather.com/locations/v1/cities/geoposition/search',
+      {
+        params: {
+          apikey: process.env.NEXT_PUBLIC_ACCUWEATHER_API_KEY,
+          q: `${location.latitude},${location.longitude}`,
+          language: 'ko',
+        },
+      }
+    )
+    .then((res) => res.data);
+  return {
+    props: {
+      Key: locationByipAdress.Key,
+      latitude: location.latitude,
+      longitude: location.longitude,
+    },
+  };
 };
