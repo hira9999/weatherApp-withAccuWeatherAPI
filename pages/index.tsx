@@ -33,17 +33,15 @@ import getCityByLonLat from '../utils/minMatLonLatByCity';
 
 interface HomeServerSideProps {
   Key: string;
-  longitude: number;
-  latitude: number;
+  cityName: string;
 }
 
-const Home: NextPage<HomeServerSideProps> = ({ Key, longitude, latitude }) => {
+const Home: NextPage<HomeServerSideProps> = ({ Key, cityName }) => {
   const [geolocationPositionError, setGeolocationPositionError] = useState<
     GeolocationPositionError | undefined
   >(undefined);
   const [navigatorPermission, setNavigatorPermission] =
     useState<boolean>(false);
-  const city = getCityByLonLat(latitude, longitude);
 
   const [getLocation, {}] = useLazyQuery<Location, LatLng>(
     GEOPOSITION_SEARCH_QUERY
@@ -83,7 +81,7 @@ const Home: NextPage<HomeServerSideProps> = ({ Key, longitude, latitude }) => {
     {
       variables: {
         locationKey: Key,
-        sidoName: city,
+        sidoName: cityName,
       },
     }
   );
@@ -238,14 +236,8 @@ const Home: NextPage<HomeServerSideProps> = ({ Key, longitude, latitude }) => {
 
 export default Home;
 
-interface LocationProps {
-  Key: string;
-  latitude: number;
-  longitude: number;
-}
-
 export const getServerSideProps: GetServerSideProps<
-  LocationProps
+  HomeServerSideProps
 > = async () => {
   const ipAddress = await publicIpv4();
 
@@ -265,11 +257,11 @@ export const getServerSideProps: GetServerSideProps<
       }
     )
     .then((res) => res.data);
+  const cityName = getCityByLonLat(location.latitude, location.longitude);
   return {
     props: {
       Key: locationByipAdress.Key,
-      latitude: location.latitude,
-      longitude: location.longitude,
+      cityName,
     },
   };
 };
