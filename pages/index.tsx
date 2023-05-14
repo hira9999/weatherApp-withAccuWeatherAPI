@@ -1,5 +1,5 @@
 import type { GetServerSideProps, NextPage } from 'next';
-import { publicIpv4 } from 'public-ip';
+import { publicIp } from 'public-ip';
 import axios from 'axios';
 import type {
   Location,
@@ -35,9 +35,14 @@ import cookie from 'cookie';
 interface HomeServerSideProps {
   Key: string;
   cityName: string;
+  LocalizedName: string;
 }
 
-const Home: NextPage<HomeServerSideProps> = ({ Key, cityName }) => {
+const Home: NextPage<HomeServerSideProps> = ({
+  Key,
+  cityName,
+  LocalizedName,
+}) => {
   const [geolocationPositionError, setGeolocationPositionError] = useState<
     GeolocationPositionError | undefined
   >(undefined);
@@ -214,6 +219,7 @@ const Home: NextPage<HomeServerSideProps> = ({ Key, cityName }) => {
               <Title
                 currentConditionData={currentConditionData}
                 fivedaysFcstData={fivedaysFcstData}
+                LocalizedName={LocalizedName}
               />
 
               <WeatherGrid
@@ -240,7 +246,7 @@ export default Home;
 export const getServerSideProps: GetServerSideProps<
   HomeServerSideProps
 > = async (context) => {
-  const ipAddress = await publicIpv4();
+  const ipAddress = await publicIp();
   const cookies = cookie.parse(context.req.headers.cookie || '');
 
   //userLocation 쿠키가 있고, 쿠키의 ip주소와 현재 ip주소가 같을때
@@ -248,12 +254,13 @@ export const getServerSideProps: GetServerSideProps<
     cookies.userLocation &&
     JSON.parse(cookies.userLocation).ipAddress == ipAddress
   ) {
-    const { Key, cityName } = JSON.parse(cookies.userLocation);
+    const { Key, cityName, LocalizedName } = JSON.parse(cookies.userLocation);
 
     return {
       props: {
         Key,
         cityName,
+        LocalizedName,
       },
     };
   }
@@ -280,6 +287,7 @@ export const getServerSideProps: GetServerSideProps<
     Key: locationByipAdress.Key,
     cityName,
     ipAddress,
+    LocalizedName: locationByipAdress.LocalizedName,
   };
   const cookieOption = cookie.serialize(
     'userLocation',
@@ -298,6 +306,7 @@ export const getServerSideProps: GetServerSideProps<
     props: {
       Key: locationByipAdress.Key,
       cityName,
+      LocalizedName: locationByipAdress.LocalizedName,
     },
   };
 };
