@@ -74,7 +74,7 @@ const minMaxLonLatByCity: {
   },
 };
 
-const getCityByLonLat = (lat: number | string, lng: number | string) => {
+export const getCityByLonLat = (lat: number | string, lng: number | string) => {
   for (const cityName in minMaxLonLatByCity) {
     const city = minMaxLonLatByCity[cityName];
     if (

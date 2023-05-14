@@ -1,7 +1,7 @@
 import { RESTDataSource } from '@apollo/datasource-rest';
 
 class AirQualityAPI extends RESTDataSource {
-  override baseURL = 'https://apis.data.go.kr';
+  override baseURL = 'http://apis.data.go.kr';
 
   async getCtprvnRltmMesureDnsty(
     sidoName: string,

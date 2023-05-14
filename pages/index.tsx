@@ -12,7 +12,7 @@ import type {
   KhaiValueData,
 } from '../graphql/types/queryDatatypes';
 import { ApolloError, useLazyQuery, useQuery } from '@apollo/client';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   GEOPOSITION_SEARCH_QUERY,
   CURRENTCONDITIONS_QUERY,
@@ -30,6 +30,7 @@ import Header from '../components/Common/Header';
 import Background from '../components/Common/Background';
 import Footer from '../components/Common/Footer';
 import getCityByLonLat from '../utils/minMatLonLatByCity';
+import cookie from 'cookie';
 
 interface HomeServerSideProps {
   Key: string;
@@ -86,29 +87,28 @@ const Home: NextPage<HomeServerSideProps> = ({ Key, cityName }) => {
     }
   );
 
-  const refetchAllWeatherData = async (
-    locationKey?: string,
-    latitude?: string,
-    longitude?: string
-  ) => {
-    if (locationKey && latitude && longitude) {
-      const sidoName = getCityByLonLat(latitude, longitude);
-      currentConditionRefetch({ locationKey });
-      fivedaysFcstDataRefetch({ locationKey });
-      twelveHoursFcstRefetch({ locationKey });
-      KhaiValuesRefetch({
-        locationKey,
-        sidoName,
-      });
-    } else {
-      currentConditionRefetch();
-      fivedaysFcstDataRefetch();
-      twelveHoursFcstRefetch();
-      KhaiValuesRefetch();
-    }
-  };
+  const refetchAllWeatherData = useCallback(
+    async (locationKey?: string, latitude?: string, longitude?: string) => {
+      if (locationKey && latitude && longitude) {
+        const sidoName = getCityByLonLat(latitude, longitude);
+        currentConditionRefetch({ locationKey });
+        fivedaysFcstDataRefetch({ locationKey });
+        twelveHoursFcstRefetch({ locationKey });
+        KhaiValuesRefetch({
+          locationKey,
+          sidoName,
+        });
+      } else {
+        currentConditionRefetch();
+        fivedaysFcstDataRefetch();
+        twelveHoursFcstRefetch();
+        KhaiValuesRefetch();
+      }
+    },
+    []
+  );
 
-  const findAccurateLocation = async () => {
+  const findAccurateLocation = useCallback(async () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
@@ -137,7 +137,7 @@ const Home: NextPage<HomeServerSideProps> = ({ Key, cityName }) => {
         }
       );
     }
-  };
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -215,6 +215,7 @@ const Home: NextPage<HomeServerSideProps> = ({ Key, cityName }) => {
                 currentConditionData={currentConditionData}
                 fivedaysFcstData={fivedaysFcstData}
               />
+
               <WeatherGrid
                 currentConditionData={currentConditionData}
                 twelveHoursFcstData={twelveHoursFcstData}
@@ -238,26 +239,61 @@ export default Home;
 
 export const getServerSideProps: GetServerSideProps<
   HomeServerSideProps
-> = async () => {
+> = async (context) => {
   const ipAddress = await publicIpv4();
+  const cookies = cookie.parse(context.req.headers.cookie || '');
 
-  const location = await axios
+  //userLocation 쿠키가 있고, 쿠키의 ip주소와 현재 ip주소가 같을때
+  if (
+    cookies.userLocation &&
+    JSON.parse(cookies.userLocation).ipAddress == ipAddress
+  ) {
+    const { Key, cityName } = JSON.parse(cookies.userLocation);
+
+    return {
+      props: {
+        Key,
+        cityName,
+      },
+    };
+  }
+
+  const geolocation = await axios
     .get(`https://ipapi.co/${ipAddress}/json/`)
     .then((res) => res.data);
 
   const locationByipAdress = await axios
     .get(
-      'http://dataservice.accuweather.com/locations/v1/cities/geoposition/search',
+      'https://dataservice.accuweather.com/locations/v1/cities/geoposition/search',
       {
         params: {
           apikey: process.env.NEXT_PUBLIC_ACCUWEATHER_API_KEY,
-          q: `${location.latitude},${location.longitude}`,
+          q: `${geolocation.latitude},${geolocation.longitude}`,
           language: 'ko',
         },
       }
     )
     .then((res) => res.data);
-  const cityName = getCityByLonLat(location.latitude, location.longitude);
+  const cityName = getCityByLonLat(geolocation.latitude, geolocation.longitude);
+
+  const cookieValue = {
+    Key: locationByipAdress.Key,
+    cityName,
+    ipAddress,
+  };
+  const cookieOption = cookie.serialize(
+    'userLocation',
+    JSON.stringify(cookieValue),
+    {
+      path: '/',
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 * 30, //30일
+      secure: process.env.NODE_ENV === 'production',
+    }
+  );
+
+  context.res.setHeader('Set-Cookie', cookieOption);
+
   return {
     props: {
       Key: locationByipAdress.Key,
