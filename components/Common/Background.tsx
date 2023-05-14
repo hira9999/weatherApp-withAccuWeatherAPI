@@ -41,7 +41,7 @@ const Background = ({
         background: `linear-gradient(${skyColor})`,
       }}
     >
-      <Sun UVindex={UVindex} />
+      {isDayTime && <Sun UVindex={UVindex} />}
       {!isDayTime && <Stars />}
       {cloudCover > 30 && <Cloud cloudCover={cloudCover} />}
       {precipitationType === 'Rain' && <Rain />}
