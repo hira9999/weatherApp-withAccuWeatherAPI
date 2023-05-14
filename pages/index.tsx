@@ -246,28 +246,7 @@ export default Home;
 export const getServerSideProps: GetServerSideProps<
   HomeServerSideProps
 > = async (context) => {
-  const ipAddress = await publicIp();
-  const cookies = cookie.parse(context.req.headers.cookie || '');
-
-  //userLocation 쿠키가 있고, 쿠키의 ip주소와 현재 ip주소가 같을때
-  if (
-    cookies.userLocation &&
-    JSON.parse(cookies.userLocation).ipAddress == ipAddress
-  ) {
-    const { Key, cityName, LocalizedName } = JSON.parse(cookies.userLocation);
-
-    return {
-      props: {
-        Key,
-        cityName,
-        LocalizedName,
-      },
-    };
-  }
-
-  const geolocation = await axios
-    .get(`https://ipapi.co/${ipAddress}/json/`)
-    .then((res) => res.data);
+  const location = JSON.parse(context.req.cookies.location as string);
 
   const locationByipAdress = await axios
     .get(
@@ -275,32 +254,13 @@ export const getServerSideProps: GetServerSideProps<
       {
         params: {
           apikey: process.env.NEXT_PUBLIC_ACCUWEATHER_API_KEY,
-          q: `${geolocation.latitude},${geolocation.longitude}`,
+          q: `${location.latitude},${location.longitude}`,
           language: 'ko',
         },
       }
     )
     .then((res) => res.data);
-  const cityName = getCityByLonLat(geolocation.latitude, geolocation.longitude);
-
-  const cookieValue = {
-    Key: locationByipAdress.Key,
-    cityName,
-    ipAddress,
-    LocalizedName: locationByipAdress.LocalizedName,
-  };
-  const cookieOption = cookie.serialize(
-    'userLocation',
-    JSON.stringify(cookieValue),
-    {
-      path: '/',
-      httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24 * 30, //30일
-      secure: process.env.NODE_ENV === 'production',
-    }
-  );
-
-  context.res.setHeader('Set-Cookie', cookieOption);
+  const cityName = getCityByLonLat(location.latitude, location.longitude);
 
   return {
     props: {
