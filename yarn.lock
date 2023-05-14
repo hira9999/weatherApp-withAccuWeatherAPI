@@ -1269,6 +1269,11 @@
     "@typescript-eslint/types" "5.57.1"
     "eslint-visitor-keys" "^3.3.0"
 
+"@vercel/edge@^0.3.4":
+  "integrity" "sha512-dFU+yAUDQRwpuRGxRDlEO1LMq0y1LGsBgkyryQWe4w15/Fy2/lCnpvdIoAhHl3QvIGAxCLHzwRHsqfLRdpxgJQ=="
+  "resolved" "https://registry.npmjs.org/@vercel/edge/-/edge-0.3.4.tgz"
+  "version" "0.3.4"
+
 "@wry/context@^0.7.0":
   "integrity" "sha512-LcDAiYWRtwAoSOArfk7cuYvFXytxfVrdX7yxoUmK7pPITLk5jYh2F8knCwS7LjgYL8u1eidPlKKV6Ikqq0ODqQ=="
   "resolved" "https://registry.npmjs.org/@wry/context/-/context-0.7.0.tgz"

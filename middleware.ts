@@ -1,16 +1,18 @@
 import { geolocation, ipAddress, next } from '@vercel/edge';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 export const config = {
   matcher: '/',
 };
 
-export default function middleware(req: Request) {
-  const { country, latitude, longitude, city } = geolocation(req);
-  const ip = ipAddress(req);
-  const location = { country, latitude, longitude, city, ip };
+export default function middleware(req: NextRequest) {
+  const { nextUrl: url, geo } = req;
+  const latitude = geo?.latitude || '';
+  const longitude = geo?.longitude || '';
+
   const response = NextResponse.next();
 
-  response.cookies.set('location', JSON.stringify(location) || 'unknown');
-  return response;
+  url.searchParams.set('latitude', latitude);
+  url.searchParams.set('longitude', longitude);
+  return NextResponse.rewrite(url);
 }

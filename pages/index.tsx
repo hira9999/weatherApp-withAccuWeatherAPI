@@ -245,8 +245,9 @@ export default Home;
 
 export const getServerSideProps: GetServerSideProps<
   HomeServerSideProps
-> = async (context) => {
-  const location = JSON.parse(context.req.cookies.location as string);
+> = async ({ query }) => {
+  const { latitude, longitude } = query;
+  console.log(query);
 
   const locationByipAdress = await axios
     .get(
@@ -254,13 +255,13 @@ export const getServerSideProps: GetServerSideProps<
       {
         params: {
           apikey: process.env.NEXT_PUBLIC_ACCUWEATHER_API_KEY,
-          q: `${location.latitude},${location.longitude}`,
+          q: `${latitude},${longitude}`,
           language: 'ko',
         },
       }
     )
     .then((res) => res.data);
-  const cityName = getCityByLonLat(location.latitude, location.longitude);
+  const cityName = getCityByLonLat(latitude as string, longitude as string);
 
   return {
     props: {
