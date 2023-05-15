@@ -246,7 +246,20 @@ export default Home;
 export const getServerSideProps: GetServerSideProps<
   HomeServerSideProps
 > = async (context) => {
-  const { latitude, longitude } = context.req.cookies;
+  const cookies = cookie.parse(context.req.headers.cookie || '');
+  const { latitude, longitude } = JSON.parse(cookies.location);
+  const cityName = getCityByLonLat(latitude as string, longitude as string);
+
+  if (cookies.locationKey) {
+    const { locationKey, localizedName } = JSON.parse(cookies.locationKey);
+    return {
+      props: {
+        Key: locationKey,
+        cityName,
+        LocalizedName: localizedName,
+      },
+    };
+  }
 
   const locationByipAdress = await axios
     .get(
@@ -260,7 +273,22 @@ export const getServerSideProps: GetServerSideProps<
       }
     )
     .then((res) => res.data);
-  const cityName = getCityByLonLat(latitude as string, longitude as string);
+
+  const cookieValue = {
+    locationKey: locationByipAdress.Key,
+    localizedName: locationByipAdress.LocalizedName,
+  };
+  const cookieOption = cookie.serialize(
+    'locationKey',
+    JSON.stringify(cookieValue),
+    {
+      path: '/',
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 * 30, //30일
+    }
+  );
+
+  context.res.setHeader('Set-Cookie', cookieOption);
 
   return {
     props: {
