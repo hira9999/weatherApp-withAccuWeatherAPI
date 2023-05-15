@@ -245,9 +245,8 @@ export default Home;
 
 export const getServerSideProps: GetServerSideProps<
   HomeServerSideProps
-> = async ({ query }) => {
-  const { latitude, longitude } = query;
-  console.log(query);
+> = async (context) => {
+  const { latitude, longitude } = context.req.cookies;
 
   const locationByipAdress = await axios
     .get(
