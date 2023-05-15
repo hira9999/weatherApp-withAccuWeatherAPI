@@ -247,11 +247,11 @@ export const getServerSideProps: GetServerSideProps<
   HomeServerSideProps
 > = async (context) => {
   const cookies = cookie.parse(context.req.headers.cookie || '');
-  const { latitude, longitude } = JSON.parse(cookies.location);
-  const cityName = getCityByLonLat(latitude as string, longitude as string);
 
-  if (cookies.locationKey) {
+  if (cookies.locationKey && cookies.location) {
     const { locationKey, localizedName } = JSON.parse(cookies.locationKey);
+    const { latitude, longitude } = JSON.parse(cookies.location);
+    const cityName = getCityByLonLat(latitude as string, longitude as string);
     return {
       props: {
         Key: locationKey,
@@ -260,41 +260,52 @@ export const getServerSideProps: GetServerSideProps<
       },
     };
   }
+  if (cookies.location) {
+    const { latitude, longitude } = JSON.parse(cookies.location);
+    const cityName = getCityByLonLat(latitude as string, longitude as string);
+    const locationByipAdress = await axios
+      .get(
+        'https://dataservice.accuweather.com/locations/v1/cities/geoposition/search',
+        {
+          params: {
+            apikey: process.env.NEXT_PUBLIC_ACCUWEATHER_API_KEY,
+            q: latitude + ',' + longitude,
+            language: 'ko',
+          },
+        }
+      )
+      .then((res) => res.data);
 
-  const locationByipAdress = await axios
-    .get(
-      'https://dataservice.accuweather.com/locations/v1/cities/geoposition/search',
+    const cookieValue = {
+      locationKey: locationByipAdress.Key,
+      localizedName: locationByipAdress.LocalizedName,
+    };
+    const cookieOption = cookie.serialize(
+      'locationKey',
+      JSON.stringify(cookieValue),
       {
-        params: {
-          apikey: process.env.NEXT_PUBLIC_ACCUWEATHER_API_KEY,
-          q: `${latitude},${longitude}`,
-          language: 'ko',
-        },
+        path: '/',
+        httpOnly: true,
+        maxAge: 1000 * 60 * 60 * 24 * 30, //30일
       }
-    )
-    .then((res) => res.data);
+    );
 
-  const cookieValue = {
-    locationKey: locationByipAdress.Key,
-    localizedName: locationByipAdress.LocalizedName,
-  };
-  const cookieOption = cookie.serialize(
-    'locationKey',
-    JSON.stringify(cookieValue),
-    {
-      path: '/',
-      httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24 * 30, //30일
-    }
-  );
+    context.res.setHeader('Set-Cookie', cookieOption);
 
-  context.res.setHeader('Set-Cookie', cookieOption);
+    return {
+      props: {
+        Key: locationByipAdress.Key,
+        cityName,
+        LocalizedName: locationByipAdress.LocalizedName,
+      },
+    };
+  }
 
   return {
     props: {
-      Key: locationByipAdress.Key,
-      cityName,
-      LocalizedName: locationByipAdress.LocalizedName,
+      Key: '223347',
+      cityName: '서울',
+      LocalizedName: 'Seoul',
     },
   };
 };
