@@ -1,5 +1,4 @@
 import type { GetServerSideProps, NextPage } from 'next';
-import { publicIp } from 'public-ip';
 import axios from 'axios';
 import type {
   Location,
@@ -31,18 +30,19 @@ import Background from '../components/Common/Background';
 import Footer from '../components/Common/Footer';
 import getCityByLonLat from '../utils/minMatLonLatByCity';
 import cookie from 'cookie';
+import Cookies from 'js-cookie';
 
 interface HomeServerSideProps {
   Key: string;
   cityName: string;
-  LocalizedName: string;
 }
 
-const Home: NextPage<HomeServerSideProps> = ({
-  Key,
-  cityName,
-  LocalizedName,
-}) => {
+const COOKIE_OPTION = {
+  httpOnly: false,
+  maxAge: 1000 * 60 * 60 * 24 * 30, //30일
+};
+
+const Home: NextPage<HomeServerSideProps> = ({ Key, cityName }) => {
   const [geolocationPositionError, setGeolocationPositionError] = useState<
     GeolocationPositionError | undefined
   >(undefined);
@@ -128,12 +128,25 @@ const Home: NextPage<HomeServerSideProps> = ({
             },
             onCompleted: (data) => {
               const {
-                Key,
-                GeoPosition: { Latitude, Longitude },
+                Key: currentKey,
+                GeoPosition: { Latitude: latitude, Longitude: longitude },
+                LocalizedName,
               } = data.getLocation;
               //키가 다를시 새로운 데이터를 가져온다.
-              data.getLocation.Key !== Key &&
-                refetchAllWeatherData(Key, Latitude, Longitude);
+              if (Key !== currentKey) {
+                refetchAllWeatherData(currentKey, latitude, longitude);
+
+                const currentLocation = {
+                  locationKey: currentKey,
+                  localizedName: LocalizedName,
+                };
+
+                Cookies.set(
+                  'locationKey',
+                  JSON.stringify(currentLocation),
+                  COOKIE_OPTION
+                );
+              }
             },
           });
         },
@@ -219,7 +232,6 @@ const Home: NextPage<HomeServerSideProps> = ({
               <Title
                 currentConditionData={currentConditionData}
                 fivedaysFcstData={fivedaysFcstData}
-                LocalizedName={LocalizedName}
               />
 
               <WeatherGrid
@@ -283,11 +295,7 @@ export const getServerSideProps: GetServerSideProps<
     const cookieOption = cookie.serialize(
       'locationKey',
       JSON.stringify(cookieValue),
-      {
-        path: '/',
-        httpOnly: true,
-        maxAge: 1000 * 60 * 60 * 24 * 30, //30일
-      }
+      COOKIE_OPTION
     );
 
     context.res.setHeader('Set-Cookie', cookieOption);

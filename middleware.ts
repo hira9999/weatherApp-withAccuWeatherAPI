@@ -1,4 +1,4 @@
-import { geolocation, ipAddress, next } from '@vercel/edge';
+import { geolocation, ipAddress } from '@vercel/edge';
 import { NextRequest, NextResponse } from 'next/server';
 
 export const config = {
