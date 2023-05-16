@@ -259,6 +259,8 @@ export const getServerSideProps: GetServerSideProps<
   HomeServerSideProps
 > = async (context) => {
   const cookies = cookie.parse(context.req.headers.cookie || '');
+  const latitude = context.query.latitude;
+  const longitude = context.query.longitude;
 
   if (cookies.locationKey && cookies.location) {
     const { locationKey, localizedName } = JSON.parse(cookies.locationKey);
@@ -272,8 +274,7 @@ export const getServerSideProps: GetServerSideProps<
       },
     };
   }
-  if (cookies.location) {
-    const { latitude, longitude } = JSON.parse(cookies.location);
+  if (longitude && latitude) {
     const cityName = getCityByLonLat(latitude as string, longitude as string);
     const locationByipAdress = await axios
       .get(
