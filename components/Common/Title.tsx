@@ -11,8 +11,9 @@ interface TitleProps {
 }
 
 const Title = ({ currentConditionData, fivedaysFcstData }: TitleProps) => {
-  const localizedName =
-    JSON.parse(Cookies.get('location') || '')?.localizedName || '--';
+  const localizedName = JSON.parse(
+    Cookies.get('locationKey') || ''
+  )?.localizedName;
   const { Value } = currentConditionData.getCurrentCondition.Temperature.Metric;
   const { WeatherText } = currentConditionData?.getCurrentCondition;
   const MaximumTemp = Math.round(
