@@ -26,7 +26,7 @@ const TwelveHoursFcst_GridItem = ({
   const sunriseTimeHour = new Date(sunriseDateStr).getHours();
 
   return (
-    <div className="col-span-2 sm:col-span-4 row-span-1 grid-item p-2">
+    <div className="col-span-2 sm:col-span-4 row-span-1 grid-item py-2 px-3.5 sm:p-2">
       <div className="grid-title border-b-[1px] border-white/50 pb-2 m-0">
         <IoMdTime className="mr-1" size={15} />
         12시간 예보

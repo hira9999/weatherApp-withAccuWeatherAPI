@@ -11,17 +11,19 @@ const UVindex_GridItem = ({ currentConditionData }: UVindex_GridItemProps) => {
 
   return (
     <>
-      <div className="flex flex-col">
-        <div className="grid-title">
-          <BsFillSunFill className="mr-1" size={12} />
-          자외선 지수
-        </div>
-        <span className=" text-3xl">{UVIndex}</span>
-        <span className="text-xl">
-          {currentConditionData.getCurrentCondition.UVIndexText}
-        </span>
+      <div className="grid-title">
+        <BsFillSunFill className="mr-1" size={12} />
+        자외선 지수
       </div>
-      <input type="range" min={0} max={11} value={UVIndex} readOnly />
+      <div className="flex flex-col justify-between h-full">
+        <div className="flex flex-col">
+          <span className=" text-3xl">{UVIndex}</span>
+          <span className="text-xl">
+            {currentConditionData.getCurrentCondition.UVIndexText}
+          </span>
+        </div>
+        <input type="range" min={0} max={11} value={UVIndex} readOnly />
+      </div>
     </>
   );
 };

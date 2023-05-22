@@ -22,7 +22,7 @@ const WeatherGridLayout = ({
     <>
       <div className="relative pb-[100%] h-full">
         <div
-          className="grid-item absolute w-full h-full p-2"
+          className="grid-item absolute w-full h-full py-2 px-3.5 sm:p-2"
           onClick={handleModal}
         >
           {children}

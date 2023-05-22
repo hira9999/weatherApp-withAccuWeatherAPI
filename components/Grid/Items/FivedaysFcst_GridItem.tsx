@@ -13,7 +13,7 @@ const FivedaysFcst_GridItem = ({ fivedaysFcstData }: FivedaysFcstProps) => {
   const { tempMin, tempMax } = getFivdaysMinMaxTemp(fivedaysFcstData);
 
   return (
-    <div className="col-span-2 row-span-2 min-h-[308px] grid-item pb-0 p-2">
+    <div className="col-span-2 row-span-2 min-h-[308px] grid-item pb-0 py-2 px-3.5 sm:p-2">
       <div className="grid-title border-b-[1px] border-white/50 pb-2 m-0">
         <AiTwotoneCalendar className="mr-1" size={15} />
         5일간 예보

@@ -24,7 +24,7 @@ const AirQuality_GridItem = ({ CIAaverage }: AirQuality_GridItem_Props) => {
   return (
     <>
       <div
-        className="col-span-2 grid-item justify-between p-2"
+        className="col-span-2 grid-item justify-between py-2 px-3.5 sm:p-2"
         onClick={handleModal}
       >
         <div>
