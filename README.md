@@ -1,57 +1,34 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
-
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
-
 # 1. Eye of the Typhoon
 
 Next.js GraphQL를 기반
 아큐웨더 APIs 데이터 소스를 이용하여 ios16 날씨앱을 구현했습니다.
 
-### [Visit Site](https://eyeofthetyphoon.vercel.app/)
+### [사이트 바로가기](https://eyeofthetyphoon.vercel.app/)
 
-# 2. Tech Stack
+# 2. 기술스택
 
 [Next.js](https://nextjs.org)
-[Graphql]() [Typescript]() [Tailwindcss]()
+[Graphql]() [Typescript]()
 
-# Preview
+# 3. 특징
+
+- AccuWeather API 데이터를 시각화 및 분석결과를 보여준다. (12시간예보, 5일간예보, 현재날씨)
+
+- airKorea 현재 위치를 기반 대기질 지수를 range input으로 시각화하여 보여준다.
+
+- 날씨 소품을 사용하여 구름, 비, 눈, 태양 데이터를 토대로 움직이는 생생한 배경소품을 사용했음.
+
+- 사용자 접속시 쿠키통신으로 불필요한 직렬패치를 줄여 FCP효율을 높임.
+
+- 그리드를 누를시 설명이 포함된 관련된 툴팁이 표시되는기능.
+
+- graphql서버통신으로 외부 중복 패치 데이터량을 줄이고, 클라이언트가 필요로 하는 데이터만 로드하여 트래픽을 줄임.
+
+# 4. 미리보기
 
 PC
 ![PC](/public/weatherApp-1200x630.png)
 Mobile
-![Mobile](/public/weatherMobile.jpg)
+![Mobile](/public/weatherApp-mobile.jpg)
 
-## Directories
-
-`page/components/Grid`
+## 5. 세부사항
